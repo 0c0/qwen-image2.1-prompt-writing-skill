@@ -1,7 +1,7 @@
 ---
 name: qwen-image-prompt-writing
 description: 按官方 Prompt Enhancer（PE）契约写 Qwen-Image-2.1 提示词 —— 输出 rewritten_prompt + wh_ratio / ratio_follow 的 JSON 契约，而不是裸提示词。Use when 用户说「Qwen-Image-2.1」「qwen-image-2.1」「qwen 生图」「qwen 改图」「多图参考编辑」「把这张图改成…」「prompt rewrite」「PE 改写」「wh_ratio」「ratio_follow」，或要把一句粗糙需求扩写成该模型能吃的标准画质描述，或迭代改图后画面发脏/颗粒/对比度失调需要定位成因与处置。
-skill_version: 1.7.0
+skill_version: 1.7.1
 ---
 
 # Qwen-Image-2.1 提示词写作（复刻官方 PE 契约）
@@ -175,7 +175,7 @@ This is an RGBA format image with transparency. [your description]. The image ha
 
 **保留锁的是内容，不是编辑强度。** 可识别性靠「点名哪些保持不变」买来，而不是靠按住效果不放。
 
-⛔ **硬边界：`denoise = 1.0`（本链路固定值）下这条链路是整体重绘，做不到像素级局部编辑。** 实测：拿原图当参考图 + 要求「把车头朝向调正」→ **朝向确实改对，但树冠出现噪声化伪影、画面质感被毁**——那层「噪声化伪影」就是**同 seed 残留同相叠加**（机制与判据见「迭代重绘」节，非本档独有）。⇒「只改一处、其余像素不动」在 `denoise = 1.0` 下**不可实现**；需要局部精确改动时，把**要改的那张放 `image_1` 并重写整段描述**，并**换新 seed**（降 `denoise` 这条路**实测无效、反而更脏**，见该节三臂对照）。
+⛔ **硬边界：`denoise = 1.0`（本链路固定值）下这条链路是整体重绘，「只改一处、其余像素不动」不可实现——需要局部精确改动时，把要改的那张放 `image_1` 并重写整段描述，并换新 seed**（伪影机制与判据见「迭代重绘」节）。
 
 ### 3. 什么该锚定，什么该决定
 
